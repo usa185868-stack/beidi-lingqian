@@ -1,171 +1,142 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>北帝灵签抽签（51签）</title>
+<meta charset="UTF-8">
+<title>北帝灵签抽签</title>
 <style>
-  :root { --gold:#d4af37; --gold-dark:#c19a2e; --paper:#f7f3e9; --ink:#2b2b2b;}
-  html,body { margin:0; padding:0; background:var(--paper); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Microsoft YaHei","PingFang SC",Segoe UI,Roboto,Arial,sans-serif; }
-  .wrap { max-width:720px; margin:0 auto; padding:24px; }
-  .card {
-    background:#fff; border:1px solid #e8e2d0; border-radius:16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,.08);
-    padding:24px;
+  body {
+    font-family: "Microsoft YaHei", sans-serif;
+    background: #fdfcf8;
+    text-align: center;
+    padding: 20px;
   }
-  h1 { margin:0 0 8px; text-align:center; color:#8b0000; font-weight:800; letter-spacing:.06em; }
-  .sub { text-align:center; color:#7a6f62; margin-bottom:16px; }
-  .actions { display:flex; gap:12px; justify-content:center; align-items:center; margin:16px 0 8px; flex-wrap:wrap; }
+  .container {
+    position: relative;
+    max-width: 500px;
+    margin: auto;
+  }
+  img, video {
+    width: 100%;
+    border-radius: 10px;
+    display: block;
+  }
   button {
-    appearance:none; border:0; border-radius:999px; padding:12px 20px; font-size:16px; font-weight:700;
-    background:var(--gold); color:#fff; cursor:pointer; transition:.2s ease;
-    box-shadow: 0 6px 14px rgba(212,175,55,.35);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 12px 25px;
+    font-size: 18px;
+    background: rgba(212,175,55,0.9);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 2;
   }
-  button:hover { background:var(--gold-dark); transform:translateY(-1px); }
-  button:disabled { opacity:.6; cursor:not-allowed; transform:none; }
-  .video-box { margin-top:10px; display:none; }
-  video { width:100%; border-radius:12px; background:#000; }
-  .result {
-    display:none; margin-top:18px; padding:18px; border:1px dashed #e0d6be; border-radius:12px; background:#fcfbf7;
+  button:hover {
+    background: rgba(193,154,46,0.9);
   }
-  .badge { display:inline-block; padding:2px 10px; border-radius:999px; background:#f3e7c0; color:#8b6400; font-size:12px; margin-left:8px;}
-  .num { font-weight:800; color:#a60; }
-  .poem { margin:.6em 0; line-height:1.7; font-size:17px; }
-  .meaning { margin:.4em 0 0; color:#4d463d; }
-  .note { text-align:center; color:#7a6f62; font-size:13px; margin-top:10px; }
+  #result {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    display: none;
+    white-space: pre-line;
+    text-align: left;
+  }
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h1>北帝灵签</h1>
-      <div class="sub">点击抽签 → 先播放视频 → 视频结束后出签文</div>
 
-      <div class="actions">
-        <button id="drawBtn">抽签</button>
-        <button id="skipBtn" title="若视频无法播放，可直接出签" style="background:#999; box-shadow:none;">跳过视频直接出签</button>
-      </div>
+<h2>北帝灵签抽签</h2>
+<div class="container">
+  <img id="lotImage" src="https://usa185868-stack.github.io/beidi-lingqian/ChatGPT%20Image%202025%E5%B9%B48%E6%9C%8814%E6%97%A5%20%E4%B8%8A%E5%8D%8805_06_12.png" alt="抽签图">
+  <video id="drawVideo" src="https://usa185868-stack.github.io/beidi-lingqian/1000050020.mp4" style="display:none;"></video>
+  <button id="drawBtn">抽签</button>
+</div>
 
-      <div class="video-box" id="videoBox">
-        <video id="fortuneVideo" playsinline preload="metadata" controls>
-          <source src="https://usa185868-stack.github.io/beidi-lingqian/1000050020.mp4" type="video/mp4">
-          您的浏览器不支持视频播放。
-        </video>
-        <div class="note">若视频卡住或设备静音限制，请点“跳过视频直接出签”。</div>
-      </div>
-
-      <div id="result" class="result"></div>
-    </div>
-  </div>
+<div id="result"></div>
 
 <script>
-(function(){
-  // 你给的“标准51签”简明版（按原文：1–25，33–51；26–32原稿缺失故不造）
-  const lots = [
-    {num:1,grade:"大吉",poem:"飞龙变化喜逢时，此日升腾果遂期。",meaning:"如龙乘势升天，时机已到，所求必成。"},
-    {num:2,grade:"中下",poem:"虎出大林伤人命，须防口舌闹纷争。",meaning:"小心冲动与争端，易惹是非损害。"},
-    {num:3,grade:"大吉",poem:"否极泰来终有日，枯木逢春花自新。",meaning:"困境将尽，转入顺境，万事更新。"},
-    {num:4,grade:"中下",poem:"劳心费力无所成，且宜守旧待时明。",meaning:"暂时守成，不宜冒进，等待良机。"},
-    {num:5,grade:"中吉",poem:"舟行万里风波静，正是安然到岸时。",meaning:"旅途平顺，事情顺利达成。"},
-    {num:6,grade:"下",poem:"路险多防迷失处，慎防小人暗害身。",meaning:"环境险恶，要提防小人。"},
-    {num:7,grade:"上",poem:"喜遇春风吹又生，枯枝发叶旧根荣。",meaning:"逢机遇而复兴，旧事重获生机。"},
-    {num:8,grade:"下",poem:"鸟入牢笼难再出，徒劳心力受困拘。",meaning:"陷于困境难以脱身。"},
-    {num:9,grade:"中",poem:"云开月出光明现，渐入佳境喜临门。",meaning:"阴霾散去，前景光明。"},
-    {num:10,grade:"下",poem:"明珠失落尘埃里，须待时来始见光。",meaning:"才能被埋没，需待机会重现。"},
-    {num:11,grade:"中",poem:"夜雨连绵道路滑，行人须慎免灾危。",meaning:"多加小心，以免灾祸。"},
-    {num:12,grade:"上",poem:"宝剑出鞘光彩显，邪魔退避保安宁。",meaning:"正气显现，困难退去。"},
-    {num:13,grade:"中吉",poem:"一叶舟轻风顺水，任君来往得安然。",meaning:"顺势而行，无阻无忧。"},
-    {num:14,grade:"下",poem:"狂风骤雨须防范，莫向深潭探虎头。",meaning:"不宜冒险，防患于未然。"},
-    {num:15,grade:"中",poem:"秋菊盛开香四溢，寒霜来后色犹存。",meaning:"坚韧自持，终获长久之安。"},
-    {num:16,grade:"中下",poem:"前途未定多迟疑，莫为虚名损实利。",meaning:"谨慎抉择，不贪虚名。"},
-    {num:17,grade:"中吉",poem:"春来草木皆欣欣，君子谋为有好音。",meaning:"春意盎然，事事向好。"},
-    {num:18,grade:"下",poem:"烈火焚林殃及物，慎防无妄之灾来。",meaning:"防范突发灾害，莫涉险境。"},
-    {num:19,grade:"中",poem:"风送渔舟归故港，浪平潮稳喜重逢。",meaning:"平安归来，喜遇良缘。"},
-    {num:20,grade:"下",poem:"宝镜蒙尘光难现，待人拂拭自明辉。",meaning:"才华需人赏识方显。"},
-    {num:21,grade:"中吉",poem:"玉兔金乌交替现，阴阳和合兆丰年。",meaning:"阴阳调和，万事顺遂。"},
-    {num:22,grade:"中",poem:"行船遇顺风，省力更省心。",meaning:"处境有利，顺势而为。"},
-    {num:23,grade:"下",poem:"路逢盗贼须防范，急早回头免受惊。",meaning:"谨防陷阱，及早回避。"},
-    {num:24,grade:"中吉",poem:"渔翁得利笑开颜，满载而归乐自然。",meaning:"收获颇丰，心情舒畅。"},
-    {num:25,grade:"中",poem:"春种一粒粟，秋收万颗子。",meaning:"努力必有收成。"},
-    {num:33,grade:"中",poem:"风雨过后见青天，忧愁尽去喜相随。",meaning:"困境解除，喜事将至。"},
-    {num:34,grade:"下",poem:"虎穴之中勿轻入，步步为营保自身。",meaning:"危险之地，不可贸然涉足。"},
-    {num:35,grade:"中吉",poem:"水清月映波光亮，前程光明福自来。",meaning:"前途顺遂，福运将至。"},
-    {num:36,grade:"下",poem:"树遭狂风枝叶落，暂避锋芒保平安。",meaning:"环境恶劣，应暂避风险。"},
-    {num:37,grade:"中吉",poem:"云收雨散天光现，好事临门喜气生。",meaning:"坏事过去，好运来临。"},
-    {num:38,grade:"中下",poem:"野火烧原无处避，小心防范免受伤。",meaning:"局势危险，要提早防备。"},
-    {num:39,grade:"中",poem:"江上风平帆影现，顺水行舟事顺成。",meaning:"顺势而为，易得成功。"},
-    {num:40,grade:"下",poem:"行到水穷山尽处，退步原来是向前。",meaning:"困境中退一步反得转机。"},
-    {num:41,grade:"中",poem:"人逢喜事精神爽，心宽体健百事兴。",meaning:"喜事相伴，诸事顺心。"},
-    {num:42,grade:"上",poem:"高山仰止景无边，努力登攀必到顶。",meaning:"目标虽高，努力必成。"},
-    {num:43,grade:"下",poem:"波浪滔天舟易覆，谨慎小心保无虞。",meaning:"风险极高，务必谨慎。"},
-    {num:44,grade:"中吉",poem:"春风化雨花开艳，万象更新喜气来。",meaning:"新气象开启，好运临门。"},
-    {num:45,grade:"下",poem:"乌云密布雷声急，暂避风头待天晴。",meaning:"局势不稳，宜暂缓行动。"},
-    {num:46,grade:"中",poem:"桃李争春花满园，欣欣向荣好时节。",meaning:"一切蓬勃向上，正是发展良机。"},
-    {num:47,grade:"下",poem:"灯油将尽光渐暗，需加补充保长明。",meaning:"资源不足，要及时补充。"},
-    {num:48,grade:"上",poem:"良田万顷收成好，五谷丰登乐太平。",meaning:"成果丰硕，生活安乐。"},
-    {num:49,grade:"中吉",poem:"顺水推舟行得快，前途无阻喜连连。",meaning:"顺势发展，诸事顺利。"},
-    {num:50,grade:"下",poem:"烈日当空行路难，宜寻荫处歇脚时。",meaning:"环境艰难，宜暂缓前进。"},
-    {num:51,grade:"吉",poem:"君汝求签未诚心，罚你香油二三斤，送经奉油敬佛祖，消灾改厄福来临。",meaning:"需诚心敬神修福，可转凶为吉，福气临门。"}
-  ];
+const lots = [
+{num:1, grade:"上上", poem:"飛龍變化喜逢時 此日昇騰果遂期", meaning:"如龍得雲，時來運轉，所求必成"},
+{num:2, grade:"中吉", poem:"月中丹桂不尋常 霜雪摧殘總發香", meaning:"雖歷艱辛，終能顯達"},
+{num:3, grade:"下下", poem:"虎出大林傷人命 須防口舌闹紛爭", meaning:"慎防是非，遠離爭端"},
+{num:4, grade:"中平", poem:"否極泰來終有日 枯木逢春花自新", meaning:"困境將盡，萬事更新"},
+{num:5, grade:"上吉", poem:"一條金線貫珠來 串得連成不易開", meaning:"有貴人相助，事事成就"},
+{num:6, grade:"中吉", poem:"雲開月出正分明 不須再問前程事", meaning:"時運已至，前途光明"},
+{num:7, grade:"下下", poem:"大雨傾盆溪水漲 行人半路被淹亡", meaning:"行事阻滯，宜暫緩進"},
+{num:8, grade:"中吉", poem:"兩岸猿聲啼不住 輕舟已過萬重山", meaning:"雖有困難，終能化解"},
+{num:9, grade:"中平", poem:"一船載寶入深灣 不遇風波得保安", meaning:"平安順遂，無大波折"},
+{num:10, grade:"上上", poem:"一輪明月照天門 萬里清光入戶來", meaning:"大吉大利，諸事順遂"},
+{num:11, grade:"中吉", poem:"鳥語花香春意濃 及時行樂樂融融", meaning:"安享當下，順其自然"},
+{num:12, grade:"中平", poem:"潮來潮去自有時 得意須防失意時", meaning:"盛衰無常，宜守中道"},
+{num:13, grade:"中吉", poem:"人逢喜事精神爽 心想事成運氣長", meaning:"心情舒暢，諸事如意"},
+{num:14, grade:"上吉", poem:"錦上添花好事多 喜上眉梢笑顏和", meaning:"喜事連連，福氣盈門"},
+{num:15, grade:"中平", poem:"青山不老綠水長 人心似水宜安祥", meaning:"平穩守成，安享太平"},
+{num:16, grade:"下下", poem:"驚弓之鳥難再安 疑神疑鬼事多難", meaning:"多疑多慮，事難成就"},
+{num:17, grade:"中吉", poem:"魚游淺水遇清波 得意乘風好揚舵", meaning:"順勢而為，事半功倍"},
+{num:18, grade:"中平", poem:"花開花謝春常在 人來人去情依然", meaning:"看淡變化，保持初心"},
+{num:19, grade:"上上", poem:"千里姻緣一線牽 有情人終成眷屬", meaning:"姻緣天定，婚事大吉"},
+{num:20, grade:"中吉", poem:"金榜題名顯祖宗 功成名就受人崇", meaning:"功名有望，聲名遠播"},
+{num:21, grade:"下下", poem:"命犯太歲多阻礙 不如退守免傷財", meaning:"宜暫避鋒芒，靜待時機"},
+{num:22, grade:"中平", poem:"日出東方照大地 光明大道好前程", meaning:"運勢漸好，前途光明"},
+{num:23, grade:"中吉", poem:"萬里江山如畫圖 功名事業兩相符", meaning:"事業順利，功名雙收"},
+{num:24, grade:"上吉", poem:"一帆風順過千山 萬事如意福綿綿", meaning:"旅途順遂，福運綿延"},
+{num:25, grade:"中平", poem:"雲霧迷漫山水間 靜觀其變待雲開", meaning:"耐心等待，時機將至"},
+{num:26, grade:"中吉", poem:"鳥語花香滿院春 東風送暖入柴門", meaning:"家宅安樂，四季平安"},
+{num:27, grade:"下下", poem:"夜行無燈多危險 迷途未返損財產", meaning:"謹慎防範，勿冒險行事"},
+{num:28, grade:"中平", poem:"江水滔滔日夜流 時光易逝莫虛度", meaning:"珍惜光陰，把握當下"},
+{num:29, grade:"上吉", poem:"龍飛鳳舞呈祥瑞 家業興旺喜盈門", meaning:"吉星高照，家道興隆"},
+{num:30, grade:"中吉", poem:"春風得意馬蹄疾 一日看盡長安花", meaning:"意氣風發，事事順遂"},
+{num:31, grade:"中平", poem:"雁過留聲人過影 相逢莫忘舊日情", meaning:"珍惜情誼，勿忘本心"},
+{num:32, grade:"下下", poem:"孤舟遇浪翻波急 人心惶惶難安息", meaning:"局勢動盪，宜守不宜攻"},
+{num:33, grade:"中吉", poem:"紅日當空照碧海 光明正大事可為", meaning:"正道行事，必得成功"},
+{num:34, grade:"上吉", poem:"鳳凰來儀呈吉兆 瑞氣臨門喜事到", meaning:"福運臨門，喜事頻傳"},
+{num:35, grade:"中平", poem:"流水落花春去也 天涯何處覓知音", meaning:"緣分難求，隨緣而安"},
+{num:36, grade:"下下", poem:"虎視眈眈欲下山 行人過路命不安", meaning:"危機四伏，須謹慎防"},
+{num:37, grade:"中吉", poem:"萬事起頭難堅守 成功指日可待期", meaning:"堅持不懈，必有收穫"},
+{num:38, grade:"中平", poem:"青燈黃卷伴長夜 寂寞清修自安然", meaning:"安守本分，靜待時機"},
+{num:39, grade:"上吉", poem:"金玉滿堂福壽長 家道興旺喜非常", meaning:"福壽雙全，家運昌盛"},
+{num:40, grade:"中吉", poem:"海闊天空任鳥飛 前途無限好施為", meaning:"胸懷廣闊，前途無量"},
+{num:41, grade:"中平", poem:"月有陰晴圓缺時 人生難免有悲歡", meaning:"順應自然，心境平和"},
+{num:42, grade:"下下", poem:"危樓高築風易摧 貪功冒進反成災", meaning:"勿急功近利，穩步為宜"},
+{num:43, grade:"中吉", poem:"春暖花開萬象新 心情舒暢運氣真", meaning:"吉祥如意，欣欣向榮"},
+{num:44, grade:"上吉", poem:"喜從天降福星臨 家門興旺百事成", meaning:"福星高照，喜事盈門"},
+{num:45, grade:"中平", poem:"平平淡淡長流水 安安穩穩度光陰", meaning:"平穩是福，細水長流"},
+{num:46, grade:"下下", poem:"狂風暴雨摧花木 災難頻仍須防備", meaning:"多防小人，謹慎行事"},
+{num:47, grade:"中吉", poem:"吉人自有天相助 災去福來樂無憂", meaning:"逢凶化吉，安樂無憂"},
+{num:48, grade:"中平", poem:"潮漲潮落無定時 得失榮枯看運機", meaning:"榮辱不驚，隨遇而安"},
+{num:49, grade:"上吉", poem:"龍騰虎躍勢非凡 功成名就喜空前", meaning:"大展宏圖，功成名就"},
+{num:50, grade:"中吉", poem:"寒梅傲雪開芬芳 歲寒方顯君子心", meaning:"堅守正道，終獲成功"},
+{num:51, grade:"中平", poem:"人安地利事無妨 心正妖邪總不傷", meaning:"心正則吉，諸事平順"}
+];
 
-  const $ = sel => document.querySelector(sel);
-  const drawBtn = $('#drawBtn');
-  const skipBtn = $('#skipBtn');
-  const videoBox = $('#videoBox');
-  const video = $('#fortuneVideo');
-  const result = $('#result');
+const btn = document.getElementById('drawBtn');
+const video = document.getElementById('drawVideo');
+const image = document.getElementById('lotImage');
+const resultDiv = document.getElementById('result');
 
-  function showLot(){
-    const lot = lots[Math.floor(Math.random() * lots.length)];
-    result.innerHTML =
-      `<div><span class="num">第${lot.num}签</span><span class="badge">${lot.grade}</span></div>
-       <div class="poem"><strong>签诗：</strong>${lot.poem}</div>
-       <div class="meaning"><strong>解签：</strong>${lot.meaning}</div>`;
-    result.style.display = 'block';
-  }
+btn.addEventListener('click', () => {
+  const lot = lots[Math.floor(Math.random() * lots.length)];
+  
+  image.style.display = 'none';
+  btn.style.display = 'none';
+  video.style.display = 'block';
+  
+  video.currentTime = 0;
+  video.play();
 
-  // 抽签：先播视频，再出签
-  drawBtn.addEventListener('click', () => {
-    result.style.display = 'none';
-    videoBox.style.display = 'block';
-    // 某些设备若静音策略限制，用户点击按钮后即可播放
-    video.currentTime = 0;
-    const playPromise = video.play();
-    if (playPromise && typeof playPromise.then === 'function') {
-      playPromise.catch(() => {
-        // 如果仍被阻止，显示控件让用户手动点播放
-        video.setAttribute('controls','controls');
-      });
-    }
-  });
-
-  // 视频结束 → 出签
-  video.addEventListener('ended', () => {
-    videoBox.style.display = 'none';
-    showLot();
-  });
-
-  // 备用：跳过视频直接出签
-  skipBtn.addEventListener('click', () => {
-    video.pause();
-    videoBox.style.display = 'none';
-    showLot();
-  });
-
-  // 保险：如果视频 60 秒仍未结束，自动出签（防卡住）
-  let watchdogTimer = null;
-  video.addEventListener('play', () => {
-    clearTimeout(watchdogTimer);
-    watchdogTimer = setTimeout(() => {
-      if (!video.paused) {
-        video.pause();
-        videoBox.style.display = 'none';
-        showLot();
-      }
-    }, 60000);
-  });
-  video.addEventListener('pause', () => clearTimeout(watchdogTimer));
-})();
+  video.onended = () => {
+    video.style.display = 'none';
+    resultDiv.innerHTML = `第${lot.num}签（${lot.grade}）\n\n签诗：${lot.poem}\n\n解签：${lot.meaning}`;
+    resultDiv.style.display = 'block';
+  };
+});
 </script>
+
 </body>
 </html>
