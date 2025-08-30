@@ -53,15 +53,8 @@
 
 <h2>北帝灵签抽签</h2>
 <div class="container">
-  <!-- Initial Image (Shows first) -->
-  <img id="lotImage" src="https://raw.githubusercontent.com/username/repository/branch/path/to/1755698895781.png" alt="抽签图">
-
-  <!-- Video GIF (Shows second after button click) -->
-  <img id="lotImage" src="https://raw.githubusercontent.com/username/repository/branch/path/to/134827qkggmwxbdmbcbq47%20(3).gif" alt="抽签图" style="display:none;">
-
-  <!-- Final GIF (Shows last after video) -->
-  <img id="lotImage" src="https://raw.githubusercontent.com/username/repository/branch/path/to/1755701086475.gif" alt="抽签图" style="display:none;">
-
+  <img id="lotImage" src="https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/1755698895781.png" alt="抽签图">
+  <video id="drawVideo" src="https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/134827qkggmwxbdmbcbq47%20(3).gif" style="display:none;"></video>
   <button id="drawBtn">抽签</button>
 </div>
 
@@ -69,87 +62,72 @@
 
 <script>
 const lots = [
-{num:1, grade:"上上", poem:"飛龍變化喜逢時 此日昇騰果遂期", meaning:"如龍得雲，時來運轉，所求必成"},
-{num:2, grade:"中吉", poem:"月中丹桂不尋常 霜雪摧殘總發香", meaning:"雖歷艱辛，終能顯達"},
-{num:3, grade:"下下", poem:"虎出大林傷人命 須防口舌闹紛爭", meaning:"慎防是非，遠離爭端"},
-{num:4, grade:"中平", poem:"否極泰來終有日 枯木逢春花自新", meaning:"困境將盡，萬事更新"},
-{num:5, grade:"上吉", poem:"一條金線貫珠來 串得連成不易開", meaning:"有貴人相助，事事成就"},
-{num:6, grade:"中吉", poem:"雲開月出正分明 不須再問前程事", meaning:"時運已至，前途光明"},
-{num:7, grade:"下下", poem:"大雨傾盆溪水漲 行人半路被淹亡", meaning:"行事阻滯，宜暫緩進"},
-{num:8, grade:"中吉", poem:"兩岸猿聲啼不住 輕舟已過萬重山", meaning:"雖有困難，終能化解"},
-{num:9, grade:"中平", poem:"一船載寶入深灣 不遇風波得保安", meaning:"平安順遂，無大波折"},
-{num:10, grade:"上上", poem:"一輪明月照天門 萬里清光入戶來", meaning:"大吉大利，諸事順遂"},
-{num:11, grade:"中吉", poem:"鳥語花香春意濃 及時行樂樂融融", meaning:"安享當下，順其自然"},
-{num:12, grade:"中平", poem:"潮來潮去自有時 得意須防失意時", meaning:"盛衰無常，宜守中道"},
-{num:13, grade:"中吉", poem:"人逢喜事精神爽 心想事成運氣長", meaning:"心情舒暢，諸事如意"},
-{num:14, grade:"上吉", poem:"錦上添花好事多 喜上眉梢笑顏和", meaning:"喜事連連，福氣盈門"},
-{num:15, grade:"中平", poem:"青山不老綠水長 人心似水宜安祥", meaning:"平穩守成，安享太平"},
-{num:16, grade:"下下", poem:"驚弓之鳥難再安 疑神疑鬼事多難", meaning:"多疑多慮，事難成就"},
-{num:17, grade:"中吉", poem:"魚游淺水遇清波 得意乘風好揚舵", meaning:"順勢而為，事半功倍"},
-{num:18, grade:"中平", poem:"花開花謝春常在 人來人去情依然", meaning:"看淡變化，保持初心"},
-{num:19, grade:"上上", poem:"千里姻緣一線牽 有情人終成眷屬", meaning:"姻緣天定，婚事大吉"},
-{num:20, grade:"中吉", poem:"金榜題名顯祖宗 功成名就受人崇", meaning:"功名有望，聲名遠播"},
-{num:21, grade:"下下", poem:"命犯太歲多阻礙 不如退守免傷財", meaning:"宜暫避鋒芒，靜待時機"},
-{num:22, grade:"中平", poem:"日出東方照大地 光明大道好前程", meaning:"運勢漸好，前途光明"},
-{num:23, grade:"中吉", poem:"萬里江山如畫圖 功名事業兩相符", meaning:"事業順利，功名雙收"},
-{num:24, grade:"上吉", poem:"一帆風順過千山 萬事如意福綿綿", meaning:"旅途順遂，福運綿延"},
-{num:25, grade:"中平", poem:"雲霧迷漫山水間 靜觀其變待雲開", meaning:"耐心等待，時機將至"},
-{num:26, grade:"中吉", poem:"鳥語花香滿院春 東風送暖入柴門", meaning:"家宅安樂，四季平安"},
-{num:27, grade:"下下", poem:"夜行無燈多危險 迷途未返損財產", meaning:"謹慎防範，勿冒險行事"},
-{num:28, grade:"中平", poem:"江水滔滔日夜流 時光易逝莫虛度", meaning:"珍惜光陰，把握當下"},
-{num:29, grade:"上吉", poem:"龍飛鳳舞呈祥瑞 家業興旺喜盈門", meaning:"吉星高照，家道興隆"},
-{num:30, grade:"中吉", poem:"春風得意馬蹄疾 一日看盡長安花", meaning:"意氣風發，事事順遂"},
-{num:31, grade:"中平", poem:"雁過留聲人過影 相逢莫忘舊日情", meaning:"珍惜情誼，勿忘本心"},
-{num:32, grade:"下下", poem:"孤舟遇浪翻波急 人心惶惶難安息", meaning:"局勢動盪，宜守不宜攻"},
-{num:33, grade:"中吉", poem:"紅日當空照碧海 光明正大事可為", meaning:"正道行事，必得成功"},
-{num:34, grade:"上吉", poem:"鳳凰來儀呈吉兆 瑞氣臨門喜事到", meaning:"福運臨門，喜事頻傳"},
-{num:35, grade:"中平", poem:"流水落花春去也 天涯何處覓知音", meaning:"緣分難求，隨緣而安"},
-{num:36, grade:"下下", poem:"虎視眈眈欲下山 行人過路命不安", meaning:"危機四伏，宜謹慎行事"},
-{num:37, grade:"中吉", poem:"晴空萬里風光好 一路順風人安康", meaning:"無事可擾，安穩順利"},
-{num:38, grade:"中平", poem:"桃花依舊笑春風 青山還在望故人", meaning:"時光流轉，心安即可"},
-{num:39, grade:"上吉", poem:"月明千里照花枝 落英繽紛風不止", meaning:"一切順遂，繁花似錦"},
-{num:40, grade:"中吉", poem:"春風又綠江南水 柔情似水綿如織", meaning:"運勢漸好，心境開朗"},
-{num:41, grade:"中平", poem:"大雁南飛背後水 視界開闊願未來", meaning:"前路通達，信心倍增"},
-{num:42, grade:"中吉", poem:"秋水共長天一色 白雲出岫千峰翠", meaning:"平穩順遂，無波無折"},
-{num:43, grade:"上上", poem:"春色滿園關不住 一枝紅杏出牆來", meaning:"如花似錦，萬事順心"},
-{num:44, grade:"中吉", poem:"浪花翻湧水漁舟 風生水起事可成", meaning:"有望成功，時機良好"},
-{num:45, grade:"下下", poem:"流水不腐井水不食 一事無成常停滯", meaning:"停滯不前，宜謹慎"},
-{num:46, grade:"中吉", poem:"林木青青日漸長 喜氣盈門事順心", meaning:"進展順利，安泰如意"},
-{num:47, grade:"中平", poem:"江山如畫夢如歌 萬物生輝慶新生", meaning:"運勢回升，萬象更新"},
-{num:48, grade:"中吉", poem:"桃李春風一杯酒 江湖夜雨十年燈", meaning:"平穩行事，獲得成功"},
-{num:49, grade:"中平", poem:"蒼茫大地一片愁 蓬萊仙山夢不休", meaning:"困難會過去，保持耐心"},
-{num:50, grade:"下下", poem:"魚沉雁淚無人問 畫樓西畔桂堂東", meaning:"困境難解，處境不佳"},
-{num:51, grade:"上吉", poem:"海上明月共潮生 水天一色望無際", meaning:"心境明澈，運勢順遂"}
+  {num: 1, grade: "上上", poem: "飛龍變化喜逢時 此日昇騰果遂期", meaning: "如龍得雲，時來運轉，所求必成"},
+  {num: 2, grade: "中吉", poem: "月中丹桂不尋常 霜雪摧殘總發香", meaning: "雖歷艱辛，終能顯達"},
+  {num: 3, grade: "下下", poem: "虎出大林傷人命 須防口舌闹紛爭", meaning: "慎防是非，遠離爭端"},
+  {num: 4, grade: "中平", poem: "否極泰來終有日 枯木逢春花自新", meaning: "困境將盡，萬事更新"},
+  {num: 5, grade: "上吉", poem: "一條金線貫珠來 串得連成不易開", meaning: "有貴人相助，事事成就"},
+  {num: 6, grade: "中吉", poem: "雲開月出正分明 不須再問前程事", meaning: "時運已至，前途光明"},
+  {num: 7, grade: "下下", poem: "大雨傾盆溪水漲 行人半路被淹亡", meaning: "行事阻滯，宜暫緩進"},
+  {num: 8, grade: "中吉", poem: "兩岸猿聲啼不住 輕舟已過萬重山", meaning: "雖有困難，終能化解"},
+  {num: 9, grade: "中平", poem: "一船載寶入深灣 不遇風波得保安", meaning: "平安順遂，無大波折"},
+  {num: 10, grade: "上上", poem: "一輪明月照天門 萬里清光入戶來", meaning: "大吉大利，諸事順遂"},
+  {num: 11, grade: "中吉", poem: "鳥語花香春意濃 及時行樂樂融融", meaning: "安享當下，順其自然"},
+  {num: 12, grade: "中平", poem: "潮來潮去自有時 得意須防失意時", meaning: "盛衰無常，宜守中道"},
+  {num: 13, grade: "中吉", poem: "人逢喜事精神爽 心想事成運氣長", meaning: "心情舒暢，諸事如意"},
+  {num: 14, grade: "上吉", poem: "錦上添花好事多 喜上眉梢笑顏和", meaning: "喜事連連，福氣盈門"},
+  {num: 15, grade: "中平", poem: "青山不老綠水長 人心似水宜安祥", meaning: "平穩守成，安享太平"},
+  {num: 16, grade: "下下", poem: "驚弓之鳥難再安 疑神疑鬼事多難", meaning: "多疑多慮，事難成就"},
+  {num: 17, grade: "中吉", poem: "魚游淺水遇清波 得意乘風好揚舵", meaning: "順勢而為，事半功倍"},
+  {num: 18, grade: "中平", poem: "花開花謝春常在 人來人去情依然", meaning: "看淡變化，保持初心"},
+  {num: 19, grade: "上上", poem: "千里姻緣一線牽 有情人終成眷屬", meaning: "姻緣天定，婚事大吉"},
+  {num: 20, grade: "中吉", poem: "金榜題名顯祖宗 功成名就受人崇", meaning: "功名有望，聲名遠播"},
+  {num: 21, grade: "下下", poem: "命犯太歲多阻礙 不如退守免傷財", meaning: "宜暫避鋒芒，靜待時機"},
+  {num: 22, grade: "中平", poem: "日出東方照大地 光明大道好前程", meaning: "運勢漸好，前途光明"},
+  {num: 23, grade: "中吉", poem: "萬里江山如畫圖 功名事業兩相符", meaning: "事業順利，功名雙收"},
+  {num: 24, grade: "上吉", poem: "一帆風順過千山 萬事如意福綿綿", meaning: "旅途順遂，福運綿延"},
+  {num: 25, grade: "中平", poem: "雲霧迷漫山水間 靜觀其變待雲開", meaning: "耐心等待，時機將至"},
+  {num: 26, grade: "中吉", poem: "鳥語花香滿院春 東風送暖入柴門", meaning: "家宅安樂，四季平安"},
+  {num: 27, grade: "下下", poem: "夜行無燈多危險 迷途未返損財產", meaning: "謹慎防範，勿冒險行事"},
+  {num: 28, grade: "中平", poem: "江水滔滔日夜流 時光易逝莫虛度", meaning: "珍惜光陰，把握當下"},
+  {num: 29, grade: "上吉", poem: "龍飛鳳舞呈祥瑞 家業興旺喜盈門", meaning: "吉星高照，家道興隆"},
+  {num: 30, grade: "中吉", poem: "春風得意馬蹄疾 一日看盡長安花", meaning: "意氣風發，事事順遂"},
+  {num: 31, grade: "中平", poem: "雁過留聲人過影 相逢莫忘舊日情", meaning: "珍惜情誼，勿忘本心"},
+  {num: 32, grade: "下下", poem: "孤舟遇浪翻波急 人心惶惶難安息", meaning: "局勢動盪，宜守不宜攻"},
+  {num: 33, grade: "中吉", poem: "紅日當空照碧海 光明正大事可為", meaning: "正道行事，必得成功"},
+  {num: 34, grade: "上吉", poem: "鳳凰來儀呈吉兆 一步登天步步高", meaning: "步步高升，運氣亨通"},
+  {num: 35, grade: "中吉", poem: "桂樹成荫秋風起 守得云开见月明", meaning: "經歷考驗，最終成功"},
+  {num: 36, grade: "下下", poem: "青山不見水悠悠 向隅而坐心茫然", meaning: "心神不寧，需調整情緒"},
+  {num: 37, grade: "中平", poem: "雨過天晴彩虹掛 風光明媚處處新", meaning: "困境過後，光明前景"},
+  {num: 38, grade: "上吉", poem: "吉星高照事事順 財源滾滾來進門", meaning: "財運亨通，生活安穩"},
+  {num: 39, grade: "上吉", poem: "山川如畫景色新 大吉大利事事順", meaning: "大吉大利，萬事如意"},
+  {num: 40, grade: "中吉", poem: "碧水悠悠江水流 事業成功自顯赫", meaning: "事業蒸蒸日上，成功在望"},
+  {num: 41, grade: "下下", poem: "行舟破浪遇風急 不宜冒進小心行", meaning: "行事應謹慎，不可貿然進行"},
+  {num: 42, grade: "中吉", poem: "天高雲淡心情爽 事事順利喜常來", meaning: "心情愉快，萬事順心"},
+  {num: 43, grade: "中平", poem: "陰霾雲密難見天 各自為戰各自安", meaning: "境遇困難，需耐心等待"},
+  {num: 44, grade: "上吉", poem: "青山翠谷雲霧散 前程似錦無障礙", meaning: "前景光明，無障無礙"},
+  {num: 45, grade: "中吉", poem: "桂花香氣滿枝頭 得意展宏圖開花", meaning: "得意之時，事業展開"},
+  {num: 46, grade: "中平", poem: "細雨霏霏不見晴 事事有待時機來", meaning: "一切尚待時機，勿急躁"},
+  {num: 47, grade: "上吉", poem: "春光燦爛喜氣臨 大吉大利安然順", meaning: "福氣來臨，安然順遂"},
+  {num: 48, grade: "中吉", poem: "閒雲野鶴心境安 一切如願逐夢行", meaning: "心境安穩，一切順遂"},
+  {num: 49, grade: "下下", poem: "驚雷一聲萬象震 不可輕舉無謀為", meaning: "大難降臨，應保持冷靜"},
+  {num: 50, grade: "中吉", poem: "柳垂新綠草色深 生意勃勃蒸蒸日上", meaning: "事業逐漸興旺，步步高升"},
+  {num: 51, grade: "上吉", poem: "千重浪後見清波 事業有望財源廣", meaning: "障礙過後，一切順利"}
 ];
 
-document.getElementById("drawBtn").addEventListener("click", function() {
-  let randomIndex = Math.floor(Math.random() * lots.length);
-  let lot = lots[randomIndex];
-
-  // Show first image
-  document.getElementById("lotImage").style.display = "block";
-
-  // Show second image after some delay (like video)
-  setTimeout(() => {
-    document.getElementById("lotImage").style.display = "none"; // Hide first image
-    document.getElementById("lotImage").style.display = "block"; // Show gif video
-  }, 3000);
-
-  // Show third image after the video (final gif)
-  setTimeout(() => {
-    document.getElementById("lotImage").style.display = "none"; // Hide second gif
-    document.getElementById("lotImage").style.display = "block"; // Show final gif
-  }, 6000);
-
-  // Display the result with poem and meaning
-  setTimeout(() => {
-    document.getElementById("result").style.display = "block";
-    document.getElementById("result").innerHTML = `
-      <h3>签文：${lot.grade}</h3>
-      <p><strong>诗句：</strong>${lot.poem}</p>
-      <p><strong>解签：</strong>${lot.meaning}</p>
-    `;
-  }, 6000);
+document.getElementById('drawBtn').addEventListener('click', function() {
+  const lot = lots[Math.floor(Math.random() * lots.length)];
+  const resultText = `签号：${lot.num}\n签级：${lot.grade}\n签诗：${lot.poem}\n解签：${lot.meaning}`;
+  document.getElementById('result').textContent = resultText;
+  document.getElementById('result').style.display = 'block';
+  
+  document.getElementById('lotImage').style.display = 'none';  // Hide the static image
+  document.getElementById('drawVideo').style.display = 'block';  // Show the first GIF
+  setTimeout(function() {
+    document.getElementById('drawVideo').style.display = 'none';  // Hide the first GIF
+    document.getElementById('lotImage').src = "https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/1755701086475.gif";  // Change image to the second GIF
+    document.getElementById('lotImage').style.display = 'block';  // Show the second GIF
+  }, 6000); // Duration for the first GIF to play (6 seconds)
 });
 </script>
 
