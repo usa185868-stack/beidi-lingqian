@@ -34,10 +34,6 @@
     background: black;
   }
   button {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     padding: 12px 25px;
     font-size: 18px;
     background: rgba(212,175,55,0.9);
@@ -50,6 +46,12 @@
   button:hover {
     background: rgba(193,154,46,0.9);
   }
+  #drawBtn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
   #result {
     margin-top: 20px;
     padding: 15px;
@@ -60,7 +62,18 @@
     white-space: pre-line;
     text-align: left;
     position: relative;
-    z-index: 10000; /* make sure result is above video */
+    z-index: 10000; /* above video */
+  }
+  #retryBtn {
+    display: block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background: rgba(70,130,180,0.9);
+    border-radius: 6px;
+  }
+  #retryBtn:hover {
+    background: rgba(60,110,160,0.9);
   }
 </style>
 </head>
@@ -129,6 +142,16 @@ const lots = [
   {num: 51, grade: "上吉", poem: "千重浪後見清波 事業有望財源廣", meaning: "障礙過後，一切順利"}
 ];
 
+function resetPage() {
+  // Remove videos
+  document.querySelectorAll("video.fullscreen").forEach(v => v.remove());
+  // Hide result
+  document.getElementById('result').style.display = 'none';
+  // Restore image + draw button
+  document.getElementById('lotImage').style.display = 'block';
+  document.getElementById('drawBtn').style.display = 'block';
+}
+
 document.getElementById('drawBtn').addEventListener('click', function() {
   const lot = lots[Math.floor(Math.random() * lots.length)];
   const resultText = `签号：${lot.num}\n签级：${lot.grade}\n签诗：${lot.poem}\n解签：${lot.meaning}`;
@@ -138,7 +161,7 @@ document.getElementById('drawBtn').addEventListener('click', function() {
   document.getElementById('drawBtn').style.display = 'none';
   document.getElementById('result').style.display = 'none';
 
-  // Remove any old videos if exist
+  // Remove any old videos
   document.querySelectorAll("video.fullscreen").forEach(v => v.remove());
 
   // Play first animation
@@ -170,8 +193,12 @@ document.getElementById('drawBtn').addEventListener('click', function() {
     secondVideo.onended = function() {
       secondVideo.pause();
       const resultDiv = document.getElementById('result');
-      resultDiv.textContent = resultText;
+      resultDiv.innerHTML = resultText + 
+        `<button id="retryBtn">再抽一次</button>`;
       resultDiv.style.display = 'block';
+
+      // Add event for retry
+      document.getElementById('retryBtn').onclick = resetPage;
     };
   };
 });
@@ -179,4 +206,3 @@ document.getElementById('drawBtn').addEventListener('click', function() {
 
 </body>
 </html>
-
