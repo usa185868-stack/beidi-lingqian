@@ -164,6 +164,8 @@ const lots = [
   {num: 51, grade: "上吉", poem: "千重浪後見清波 事業有望財源廣", meaning: "障礙過後，一切順利"}
 ];
 
+let chosenLot = null; // store the result chosen on first click
+
 function createVideo(src, className) {
   const video = document.createElement("video");
   video.src = src;
@@ -173,29 +175,29 @@ function createVideo(src, className) {
   video.playsInline = true;
   video.onended = () => video.remove();
   document.body.appendChild(video);
-  video.play().catch(()=>{}); // avoid autoplay block
+  video.play().catch(()=>{}); 
   return video;
 }
 
 function resetPage() {
-  // remove leftover videos
+  // cleanup
   document.querySelectorAll("video.fullscreen, video.modal").forEach(v => v.remove());
-  // hide result + button
   document.getElementById('result').style.display = 'none';
   document.getElementById('drawBtn').style.display = 'none';
+  chosenLot = null;
 
-  // reset image
   const lotImage = document.getElementById('lotImage');
   lotImage.style.display = 'block';
   lotImage.style.cursor = 'pointer';
-
-  // reattach the one-time click listener
   lotImage.addEventListener('click', startLoading, {once:true});
 }
 
 function startLoading() {
   const lotImage = document.getElementById('lotImage');
-  lotImage.style.display = 'none'; // hide while loading
+  lotImage.style.display = 'none'; 
+
+  // pick fortune right away (but don't show yet)
+  chosenLot = lots[Math.floor(Math.random() * lots.length)];
 
   const firstVideo = createVideo(
     "https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/lv_0_20250902201929.mp4",
@@ -211,9 +213,6 @@ function startLoading() {
 }
 
 document.getElementById('drawBtn').addEventListener('click', function() {
-  const lot = lots[Math.floor(Math.random() * lots.length)];
-  const resultText = `签号：${lot.num}\n签级：${lot.grade}\n签诗：${lot.poem}\n解签：${lot.meaning}`;
-  
   document.getElementById('drawBtn').style.display = 'none';
   document.getElementById('result').style.display = 'none';
 
@@ -224,7 +223,10 @@ document.getElementById('drawBtn').addEventListener('click', function() {
 
   secondVideo.onended = function() {
     secondVideo.remove();
-    document.getElementById('lotImage').style.display = 'none'; // hide shrine image
+    document.getElementById('lotImage').style.display = 'none';
+
+    // show pre-picked result
+    const resultText = `签号：${chosenLot.num}\n签级：${chosenLot.grade}\n签诗：${chosenLot.poem}\n解签：${chosenLot.meaning}`;
     const resultDiv = document.getElementById('result');
     resultDiv.innerHTML = resultText + `<button id="retryBtn">再抽一次</button>`;
     resultDiv.style.display = 'block';
@@ -232,7 +234,7 @@ document.getElementById('drawBtn').addEventListener('click', function() {
   };
 });
 
-// run reset once at startup
+// initialize
 resetPage();
 </script>
 
