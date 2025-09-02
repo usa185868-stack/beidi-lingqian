@@ -24,12 +24,13 @@
   }
   video.fullscreen {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
-    z-index: 9999; /* above everything */
+    top: 50%;
+    left: 50%;
+    max-width: 100vw;
+    max-height: 100vh;
+    transform: translate(-50%, -50%);
+    object-fit: contain; /* show full video without cutting off */
+    z-index: 9999;
     background: black;
   }
   button {
@@ -59,7 +60,7 @@
     white-space: pre-line;
     text-align: left;
     position: relative;
-    z-index: 2;
+    z-index: 10000; /* make sure result is above video */
   }
 </style>
 </head>
@@ -67,7 +68,6 @@
 
 <h2>北帝灵签抽签</h2>
 <div class="container">
-  <!-- Updated default static image -->
   <img id="lotImage" src="https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/1755698895781%20(2).png" alt="抽签图">
   <button id="drawBtn">抽签</button>
 </div>
@@ -133,22 +133,26 @@ document.getElementById('drawBtn').addEventListener('click', function() {
   const lot = lots[Math.floor(Math.random() * lots.length)];
   const resultText = `签号：${lot.num}\n签级：${lot.grade}\n签诗：${lot.poem}\n解签：${lot.meaning}`;
   
-  // Hide image + button during animations
+  // Hide image + button
   document.getElementById('lotImage').style.display = 'none';
   document.getElementById('drawBtn').style.display = 'none';
   document.getElementById('result').style.display = 'none';
 
-  // Play first animation fullscreen
+  // Remove any old videos if exist
+  document.querySelectorAll("video.fullscreen").forEach(v => v.remove());
+
+  // Play first animation
   const firstVideo = document.createElement('video');
   firstVideo.className = "fullscreen";
   firstVideo.autoplay = true;
   firstVideo.muted = true;
+  firstVideo.playsInline = true;
   firstVideo.innerHTML = `
     <source src="https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/lv_0_20250902133004.mp4" type="video/mp4">
   `;
   document.body.appendChild(firstVideo);
 
-  // When first ends → play second (looping)
+  // When first ends → play second
   firstVideo.onended = function() {
     firstVideo.remove();
 
@@ -156,19 +160,23 @@ document.getElementById('drawBtn').addEventListener('click', function() {
     secondVideo.className = "fullscreen";
     secondVideo.autoplay = true;
     secondVideo.muted = true;
-    secondVideo.loop = true;
+    secondVideo.playsInline = true;
     secondVideo.innerHTML = `
       <source src="https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/lv_0_20250902133102.mp4" type="video/mp4">
     `;
     document.body.appendChild(secondVideo);
 
-    // Show fortune text on top of looping video
-    const resultDiv = document.getElementById('result');
-    resultDiv.textContent = resultText;
-    resultDiv.style.display = 'block';
+    // Show fortune when second finishes
+    secondVideo.onended = function() {
+      secondVideo.pause();
+      const resultDiv = document.getElementById('result');
+      resultDiv.textContent = resultText;
+      resultDiv.style.display = 'block';
+    };
   };
 });
 </script>
 
 </body>
 </html>
+
