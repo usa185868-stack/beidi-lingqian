@@ -6,7 +6,7 @@
 <style>
   body {
     font-family: "Microsoft YaHei", sans-serif;
-    background: white; /* plain white background */
+    background: white;
     text-align: center;
     padding: 20px;
     margin: 0;
@@ -21,7 +21,24 @@
     width: 100%;
     border-radius: 10px;
     display: block;
-    cursor: pointer; /* make it clear it's clickable */
+  }
+  /* golden pulsing button */
+  #drawBtn {
+    margin-top: 15px;
+    padding: 12px 25px;
+    font-size: 18px;
+    background: gold;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
   }
   video.fullscreen {
     position: fixed;
@@ -33,6 +50,19 @@
     object-fit: contain;
     z-index: 9999;
     background: transparent;
+  }
+  /* small loading modal */
+  video.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 200px;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
   }
   #result {
     margin-top: 20px;
@@ -67,13 +97,14 @@
 <h2>北帝灵签抽签</h2>
 <div class="container">
   <img id="lotImage" src="https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/1755698895781%20(2).png" alt="抽签图">
+  <button id="drawBtn">点击抽签</button>
 </div>
 
 <div id="result"></div>
 
 <!-- Preload videos hidden -->
 <video id="preload1" preload="auto" muted playsinline style="display:none">
-  <source src="https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/lv_0_20250902210720.mp4" type="video/mp4">
+  <source src="https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/lv_0_20250902201929.mp4" type="video/mp4">
 </video>
 <video id="preload2" preload="auto" muted playsinline style="display:none">
   <source src="https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/lv_0_20250902133102.mp4" type="video/mp4">
@@ -135,21 +166,21 @@ const lots = [
 ];
 
 function resetPage() {
-  document.querySelectorAll("video.fullscreen").forEach(v => v.remove());
+  document.querySelectorAll("video.fullscreen, video.modal").forEach(v => v.remove());
   document.getElementById('result').style.display = 'none';
+  document.getElementById('drawBtn').style.display = 'inline-block';
   document.getElementById('lotImage').style.display = 'block';
 }
 
-document.getElementById('lotImage').addEventListener('click', function() {
+document.getElementById('drawBtn').addEventListener('click', function() {
   const lot = lots[Math.floor(Math.random() * lots.length)];
   const resultText = `签号：${lot.num}\n签级：${lot.grade}\n签诗：${lot.poem}\n解签：${lot.meaning}`;
   
-  document.getElementById('lotImage').style.display = 'none';
+  document.getElementById('drawBtn').style.display = 'none';
   document.getElementById('result').style.display = 'none';
-  document.querySelectorAll("video.fullscreen").forEach(v => v.remove());
 
   const firstVideo = document.getElementById('preload1').cloneNode(true);
-  firstVideo.className = "fullscreen";
+  firstVideo.className = "modal";
   firstVideo.style.display = "block";
   firstVideo.autoplay = true;
   document.body.appendChild(firstVideo);
