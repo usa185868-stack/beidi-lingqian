@@ -9,16 +9,28 @@
     background: #ffffff;
     text-align: center;
     padding: 20px;
+    margin: 0;
   }
   .container {
     position: relative;
     max-width: 500px;
     margin: auto;
+    z-index: 1;
   }
-  img, video {
+  img {
     width: 100%;
     border-radius: 10px;
     display: block;
+  }
+  video.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 9999; /* above everything */
+    background: black;
   }
   button {
     position: absolute;
@@ -41,11 +53,13 @@
     margin-top: 20px;
     padding: 15px;
     border-radius: 8px;
-    background: #fafafa;
+    background: rgba(255,255,255,0.85);
     border: 1px solid #ddd;
     display: none;
     white-space: pre-line;
     text-align: left;
+    position: relative;
+    z-index: 2;
   }
 </style>
 </head>
@@ -53,7 +67,7 @@
 
 <h2>北帝灵签抽签</h2>
 <div class="container">
-  <!-- ✅ Updated static image -->
+  <!-- Updated default static image -->
   <img id="lotImage" src="https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/1755698895781%20(2).png" alt="抽签图">
   <button id="drawBtn">抽签</button>
 </div>
@@ -118,62 +132,43 @@ const lots = [
 document.getElementById('drawBtn').addEventListener('click', function() {
   const lot = lots[Math.floor(Math.random() * lots.length)];
   const resultText = `签号：${lot.num}\n签级：${lot.grade}\n签诗：${lot.poem}\n解签：${lot.meaning}`;
-  document.getElementById('result').textContent = resultText;
-  document.getElementById('result').style.display = 'block';
   
-  // Hide static image
+  // Hide image + button during animations
   document.getElementById('lotImage').style.display = 'none';
+  document.getElementById('drawBtn').style.display = 'none';
+  document.getElementById('result').style.display = 'none';
 
-  // --- Play first animation (2133004.mp4) ---
-  let firstAnim = document.getElementById('firstAnim');
-  if (!firstAnim) {
-    const container = document.querySelector('.container');
-    firstAnim = document.createElement('video');
-    firstAnim.id = 'firstAnim';
-    firstAnim.width = "100%";
-    firstAnim.muted = true;
-    firstAnim.autoplay = true;
-    firstAnim.style.borderRadius = "10px";
-    firstAnim.innerHTML = `
-      <source src="https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/lv_0_20250902133004.mp4" type="video/mp4">
-      您的浏览器不支持视频播放。
+  // Play first animation fullscreen
+  const firstVideo = document.createElement('video');
+  firstVideo.className = "fullscreen";
+  firstVideo.autoplay = true;
+  firstVideo.muted = true;
+  firstVideo.innerHTML = `
+    <source src="https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/lv_0_20250902133004.mp4" type="video/mp4">
+  `;
+  document.body.appendChild(firstVideo);
+
+  // When first ends → play second (looping)
+  firstVideo.onended = function() {
+    firstVideo.remove();
+
+    const secondVideo = document.createElement('video');
+    secondVideo.className = "fullscreen";
+    secondVideo.autoplay = true;
+    secondVideo.muted = true;
+    secondVideo.loop = true;
+    secondVideo.innerHTML = `
+      <source src="https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/lv_0_20250902133102.mp4" type="video/mp4">
     `;
-    container.insertBefore(firstAnim, document.getElementById('drawBtn'));
-  } else {
-    firstAnim.style.display = 'block';
-    firstAnim.play();
-  }
+    document.body.appendChild(secondVideo);
 
-  // --- After 6s, switch to looping result animation (2133102.mp4) ---
-  setTimeout(function() {
-    firstAnim.style.display = 'none';
-
-    const container = document.querySelector('.container');
-    let resultAnim = document.getElementById('resultAnim');
-    if (!resultAnim) {
-      resultAnim = document.createElement('video');
-      resultAnim.id = 'resultAnim';
-      resultAnim.width = "100%";
-      resultAnim.muted = true;
-      resultAnim.autoplay = true;
-      resultAnim.loop = true; // ✅ keeps looping
-      resultAnim.style.borderRadius = "10px";
-      resultAnim.innerHTML = `
-        <source src="https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/lv_0_20250902133102.mp4" type="video/mp4">
-        您的浏览器不支持视频播放。
-      `;
-      container.insertBefore(resultAnim, document.getElementById('drawBtn'));
-    } else {
-      resultAnim.style.display = 'block';
-      resultAnim.play();
-    }
-  }, 6000);
+    // Show fortune text on top of looping video
+    const resultDiv = document.getElementById('result');
+    resultDiv.textContent = resultText;
+    resultDiv.style.display = 'block';
+  };
 });
 </script>
-
-</body>
-</html>
-
 
 </body>
 </html>
