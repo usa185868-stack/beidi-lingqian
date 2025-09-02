@@ -217,6 +217,10 @@ document.getElementById('drawBtn').addEventListener('click', function() {
 
   secondVideo.onended = function() {
     secondVideo.remove();
+
+    // hide shrine image when result shows
+    document.getElementById('lotImage').style.display = 'none';
+
     const resultDiv = document.getElementById('result');
     resultDiv.innerHTML = resultText + 
       `<button id="retryBtn">再抽一次</button>`;
