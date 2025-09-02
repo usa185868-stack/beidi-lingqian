@@ -6,8 +6,7 @@
 <style>
   body {
     font-family: "Microsoft YaHei", sans-serif;
-    background: url("https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/1756797958882.jpg") no-repeat center center fixed;
-    background-size: cover;
+    background: white; /* plain white background */
     text-align: center;
     padding: 20px;
     margin: 0;
@@ -32,7 +31,7 @@
     transform: translate(-50%, -50%);
     object-fit: contain;
     z-index: 9999;
-    background: transparent; /* no black flash */
+    background: transparent;
   }
   button {
     padding: 12px 25px;
@@ -57,7 +56,7 @@
     margin-top: 20px;
     padding: 15px;
     border-radius: 8px;
-    background: rgba(255,255,255,0.85);
+    background: rgba(255,255,255,0.95);
     border: 1px solid #ddd;
     display: none;
     white-space: pre-line;
@@ -90,7 +89,7 @@
 
 <!-- Preload videos hidden -->
 <video id="preload1" preload="auto" muted playsinline style="display:none">
-  <source src="https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/lv_0_20250902201929.mp4" type="video/mp4">
+  <source src="https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/lv_0_20250902133004.mp4" type="video/mp4">
 </video>
 <video id="preload2" preload="auto" muted playsinline style="display:none">
   <source src="https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/lv_0_20250902133102.mp4" type="video/mp4">
@@ -167,7 +166,6 @@ document.getElementById('drawBtn').addEventListener('click', function() {
   document.getElementById('result').style.display = 'none';
   document.querySelectorAll("video.fullscreen").forEach(v => v.remove());
 
-  // Clone preloaded first video
   const firstVideo = document.getElementById('preload1').cloneNode(true);
   firstVideo.className = "fullscreen";
   firstVideo.style.display = "block";
@@ -178,7 +176,6 @@ document.getElementById('drawBtn').addEventListener('click', function() {
   firstVideo.onended = function() {
     firstVideo.remove();
 
-    // Clone preloaded second video
     const secondVideo = document.getElementById('preload2').cloneNode(true);
     secondVideo.className = "fullscreen";
     secondVideo.style.display = "block";
@@ -187,7 +184,7 @@ document.getElementById('drawBtn').addEventListener('click', function() {
     secondVideo.play();
 
     secondVideo.onended = function() {
-      secondVideo.remove(); // remove instead of freeze
+      secondVideo.remove();
       const resultDiv = document.getElementById('result');
       resultDiv.innerHTML = resultText + 
         `<button id="retryBtn">再抽一次</button>`;
