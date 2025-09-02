@@ -168,21 +168,27 @@ const lots = [
 ];
 
 function resetPage() {
+  // remove leftover videos
   document.querySelectorAll("video.fullscreen, video.modal").forEach(v => v.remove());
+  // hide result + button
   document.getElementById('result').style.display = 'none';
   document.getElementById('drawBtn').style.display = 'none';
+
+  // reset image
   const lotImage = document.getElementById('lotImage');
   lotImage.style.display = 'block';
   lotImage.style.cursor = 'pointer';
+
+  // reattach the one-time click listener
+  lotImage.addEventListener('click', startLoading, {once:true});
 }
 
-document.getElementById('lotImage').addEventListener('click', function startLoading() {
+function startLoading() {
   const lotImage = document.getElementById('lotImage');
   lotImage.style.display = 'none'; // hide while loading
 
   const firstVideo = document.getElementById('preload1').cloneNode(true);
   firstVideo.className = "modal";
-  firstVideo.style.display = "block";
   firstVideo.autoplay = true;
   document.body.appendChild(firstVideo);
   firstVideo.play();
@@ -191,11 +197,10 @@ document.getElementById('lotImage').addEventListener('click', function startLoad
     firstVideo.remove();
     lotImage.style.display = 'block';
     lotImage.style.cursor = 'default';
+    // show pulsing button only now
     document.getElementById('drawBtn').style.display = 'inline-block';
-    // disable further clicks on the image
-    lotImage.removeEventListener('click', startLoading);
   };
-});
+}
 
 document.getElementById('drawBtn').addEventListener('click', function() {
   const lot = lots[Math.floor(Math.random() * lots.length)];
@@ -206,7 +211,6 @@ document.getElementById('drawBtn').addEventListener('click', function() {
 
   const secondVideo = document.getElementById('preload2').cloneNode(true);
   secondVideo.className = "fullscreen";
-  secondVideo.style.display = "block";
   secondVideo.autoplay = true;
   document.body.appendChild(secondVideo);
   secondVideo.play();
@@ -220,6 +224,9 @@ document.getElementById('drawBtn').addEventListener('click', function() {
     document.getElementById('retryBtn').onclick = resetPage;
   };
 });
+
+// run reset once at startup
+resetPage();
 </script>
 
 </body>
