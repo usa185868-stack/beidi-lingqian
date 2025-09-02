@@ -6,7 +6,8 @@
 <style>
   body {
     font-family: "Microsoft YaHei", sans-serif;
-    background: #000000;
+    background: url("https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/1756797958882.jpg") no-repeat center center fixed;
+    background-size: cover;
     text-align: center;
     padding: 20px;
     margin: 0;
@@ -31,7 +32,7 @@
     transform: translate(-50%, -50%);
     object-fit: contain;
     z-index: 9999;
-    background: transparent; /* no black box */
+    background: transparent; /* no black flash */
   }
   button {
     padding: 12px 25px;
@@ -186,7 +187,7 @@ document.getElementById('drawBtn').addEventListener('click', function() {
     secondVideo.play();
 
     secondVideo.onended = function() {
-      secondVideo.remove(); // remove, not freeze
+      secondVideo.remove(); // remove instead of freeze
       const resultDiv = document.getElementById('result');
       resultDiv.innerHTML = resultText + 
         `<button id="retryBtn">再抽一次</button>`;
