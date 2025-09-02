@@ -21,6 +21,7 @@
     width: 100%;
     border-radius: 10px;
     display: block;
+    cursor: pointer; /* make it clear it's clickable */
   }
   video.fullscreen {
     position: fixed;
@@ -32,25 +33,6 @@
     object-fit: contain;
     z-index: 9999;
     background: transparent;
-  }
-  button {
-    padding: 12px 25px;
-    font-size: 18px;
-    background: rgba(212,175,55,0.9);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    z-index: 2;
-  }
-  button:hover {
-    background: rgba(193,154,46,0.9);
-  }
-  #drawBtn {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
   }
   #result {
     margin-top: 20px;
@@ -70,7 +52,10 @@
     padding: 10px 20px;
     font-size: 16px;
     background: rgba(70,130,180,0.9);
+    border: none;
+    color: white;
     border-radius: 6px;
+    cursor: pointer;
   }
   #retryBtn:hover {
     background: rgba(60,110,160,0.9);
@@ -82,7 +67,6 @@
 <h2>北帝灵签抽签</h2>
 <div class="container">
   <img id="lotImage" src="https://raw.githubusercontent.com/usa185868-stack/beidi-lingqian/main/1755698895781%20(2).png" alt="抽签图">
-  <button id="drawBtn">抽签</button>
 </div>
 
 <div id="result"></div>
@@ -154,15 +138,13 @@ function resetPage() {
   document.querySelectorAll("video.fullscreen").forEach(v => v.remove());
   document.getElementById('result').style.display = 'none';
   document.getElementById('lotImage').style.display = 'block';
-  document.getElementById('drawBtn').style.display = 'block';
 }
 
-document.getElementById('drawBtn').addEventListener('click', function() {
+document.getElementById('lotImage').addEventListener('click', function() {
   const lot = lots[Math.floor(Math.random() * lots.length)];
   const resultText = `签号：${lot.num}\n签级：${lot.grade}\n签诗：${lot.poem}\n解签：${lot.meaning}`;
   
   document.getElementById('lotImage').style.display = 'none';
-  document.getElementById('drawBtn').style.display = 'none';
   document.getElementById('result').style.display = 'none';
   document.querySelectorAll("video.fullscreen").forEach(v => v.remove());
 
